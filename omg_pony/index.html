@@ -113,7 +113,8 @@ class val Env
 # Capabilities-secure
 
 * Describe what cannot be done with reference
-
+* Prevents reads during writes and writes during reads
+* Guarantees lock free data exchange
 
 --
 
@@ -123,12 +124,14 @@ class val Env
 | Deny local write Aliases| Transition (_trn_)      | Value (_val_)         |                         |
 | Allow all local Aliases |  Reference (_ref_)      |  Box (_box_)          |  Tag (_tag_)            |
 
+[Capability subtyping](https://tutorial.ponylang.org/capabilities/capability-subtyping.html)
+
+[Deny Capabilities for Safe, Fast Actors - Clebsch et al. 2015](http://www.doc.ic.ac.uk/~scd/fast-cheap-AGERE.pdf)
+
 ???
 `val` can never be modified so can be passed aroun
 `ref` can be used locally, but can't be shared with others
 
-
-[Deny Capabilities for Safe, Fast Actors - Clebsch et al. 2015](http://www.doc.ic.ac.uk/~scd/fast-cheap-AGERE.pdf)
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
     </script>
