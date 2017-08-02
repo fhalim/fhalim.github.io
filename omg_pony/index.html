@@ -33,9 +33,14 @@ class: center, middle
 
 * Actor model
 * Capabilities-secure
-* secure
+* high-performance
 
 programming Language
+
+???
+Actor oriented programming language. Uses actors to model units of execution.
+Capabilities used for describing manners in which references can be used.
+Several features being described below result in very high-performance, scalable language
 
 ---
 # Hello world
@@ -47,28 +52,83 @@ actor Main
 
 ```
 
+???
+Pretty straightforward, reads like traditional programming languages.
+Let's break it down.
+---
 
+# Actors
 
 --
 ```pony
 actor Main```
-Actors are unit of execution
 
+???
+Actors unit of execution. `Main` actor entry point
 --
 ```pony
 new create(env: Env) =>```
-Constructor for the actor taking explicit argument for environment
 
+???
+Constructors denoted with `new` keyword. environment passed in as argument
 --
 ```pony
     env.out.print("Hello, world.")
 ```
-`env.out` is an actor with a behavior named `print`
+
+???
+`env.out` actor which has a behavior named `print`.
+
+--
+```pony
+be sayHello(who: String) =>
+    env.out.print("Hello, " + who)
+```
+
+???
+Behaviors declared with `be` keyword. Asynchronous WRT caller. Queue for messages to actor.
+Execution for each actor sequential.
 
 ---
 
-# Introduction
+# Classes
 
+```pony
+class val Env
+...
+  
+  let out: StdStream
+...
+  
+  new _create(
+    argc: U32,
+    argv: Pointer[Pointer[U8]] val,
+    envp: Pointer[Pointer[U8]] val) =>
+    @pony_os_stdout_setup[None]()
+    out = StdStream._out()
+
+```
+---
+
+# Capabilities-secure
+
+* Describe what cannot be done with reference
+
+
+--
+
+|                         | Deny Global R/W Aliases | Deny Global W Aliases | Deny all Global Aliases |
+|-------------------------|:-----------------------:|:---------------------:|:-----------------------:|
+| Deny local R/W Aliases  |  Isolated (_iso_)       |                       |                         |
+| Deny local write Aliases| Transition (_trn_)      | Value (_val_)         |                         |
+| Allow all local Aliases |  Reference (_ref_)      |  Box (_box_)          |  Tag (_tag_)            |
+
+???
+`val` can never be modified so can be passed aroun
+`ref` can be used locally, but can't be shared with others
+
+
+[Deny Capabilities for Safe, Fast Actors - Clebsch et al. 2015](http://www.doc.ic.ac.uk/~scd/fast-cheap-AGERE.pdf)
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
     </script>
