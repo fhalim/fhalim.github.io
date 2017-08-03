@@ -107,7 +107,25 @@ class val Env
     @pony_os_stdout_setup[None]()
     out = StdStream._out()
 
+  fun out(): StdStream => out
+
+  fun ref set_stuff(to: U64 = 0): U64 => _stuff = to
+
 ```
+
+???
+Classes can have
+* Constructors
+* fields
+* functions
+
+`ref` means the object being called on must have ref type.
+
+Local type inference, but functions args and return types must be specified
+
+Everything is an operator. Assignment returns value from right.
+
+Traits exist for nominal subtyping. Interfaces for structural typing
 ---
 
 # Capabilities-secure
@@ -131,6 +149,90 @@ class val Env
 ???
 `val` can never be modified so can be passed aroun
 `ref` can be used locally, but can't be shared with others
+Can `consume` variable signalling to the compiler that you're done using the object
+
+
+---
+
+# Functional
+
+```pony
+fun f(x: (U32 | String | None)): String =>
+  match x
+  | None => "none"
+  | 3 => "three"
+  | "5" => "not four"
+  else
+    "something else"
+  end
+```
+
+???
+Has several functional language features including
+
+* algebraic data types (union, tuples)
+* pattern matching with object decomposition
+* Implicit return
+
+---
+
+# FFI
+
+```c
+typedef void(*CB)(void*, int);
+```
+
+```pony
+use "path:./"
+use "lib:ffi-callbacks"
+type CB is @{(Env, I32)}
+```
+
+???
+Use the `use` syntax to reference native code.
+
+Declare type corresponding to native types
+--
+```c
+void do_callback(CB callback, void* env)
+{
+  callback(env, 10);
+}
+```
+
+```pony
+use @do_callback[None](fptr: CB, env: Env)
+```
+
+???
+Match up the signatures for functions between C and pony
+--
+```pony
+primitive Callback
+  fun @callback(env: Env, i: I32) =>
+    env.out.print(i.string())
+
+...
+
+@do_callback(addressof Callback.callback, env)
+```
+???
+Trivial to go back and forth between Pony and native code
+---
+
+# Conclusion
+
+* fawad@fawad.net
+* [Pony Tutorial](https://tutorial.ponylang.org/)
+
+???
+Great language with huge number of desirable features.
+
+Some rough edges
+
+Gathering steam quickly
+
+Tons of academic papers around concurrency, GC.
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
